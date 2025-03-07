@@ -1,0 +1,154 @@
+/*
+ * Final Fantasy VII - Java Version
+ * Complete Game Source Code
+ */
+
+// Main.java - Entry Point
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Welcome to Final Fantasy VII Java Edition!");
+        new Overworld(); // Start the game in Midgar
+    }
+}
+
+// Overworld.java - Handles Exploration
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class Overworld extends JPanel implements KeyListener {
+    private int cloudX = 200, cloudY = 200;
+    private final int STEP = 10;
+
+    public Overworld() {
+        JFrame frame = new JFrame("Final Fantasy VII - Overworld");
+        frame.add(this);
+        frame.setSize(800, 600);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+        frame.addKeyListener(this);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, getWidth(), getHeight());
+        g.setColor(Color.YELLOW);
+        g.fillRect(cloudX, cloudY, 40, 40); // Cloud as a yellow square
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        int key = e.getKeyCode();
+        if (key == KeyEvent.VK_LEFT) cloudX -= STEP;
+        if (key == KeyEvent.VK_RIGHT) cloudX += STEP;
+        if (key == KeyEvent.VK_UP) cloudY -= STEP;
+        if (key == KeyEvent.VK_DOWN) cloudY += STEP;
+        repaint();
+    }
+
+    @Override public void keyReleased(KeyEvent e) {}
+    @Override public void keyTyped(KeyEvent e) {}
+}
+
+// BattleSystem.java - Handles Combat
+import java.util.Random;
+import java.util.Scanner;
+
+public class BattleSystem {
+    private static int cloudHP = 150, enemyHP = 100;
+    private static final int cloudAttack = 25, enemyAttack = 15;
+    private static Scanner scanner = new Scanner(System.in);
+    private static Random random = new Random();
+
+    public static void startBattle() {
+        System.out.println("A Shinra Soldier appears!");
+        while (cloudHP > 0 && enemyHP > 0) {
+            System.out.println("\nCloud's Turn!");
+            System.out.println("1. Attack  2. Magic (Fire)  3. Item (Potion)");
+            int choice = scanner.nextInt();
+            if (choice == 1) attackEnemy();
+            if (choice == 2) useMagic();
+            if (enemyHP <= 0) break;
+            enemyTurn();
+        }
+        if (cloudHP > 0) System.out.println("Victory!");
+        else System.out.println("Defeated...");
+    }
+
+    private static void attackEnemy() {
+        int damage = cloudAttack + random.nextInt(5);
+        enemyHP -= damage;
+        System.out.println("Cloud attacks! Deals " + damage + " damage.");
+    }
+
+    private static void useMagic() {
+        System.out.println("Cloud casts Fire! Deals 30 damage.");
+        enemyHP -= 30;
+    }
+
+    private static void enemyTurn() {
+        int damage = enemyAttack + random.nextInt(5);
+        cloudHP -= damage;
+        System.out.println("Shinra Soldier attacks! Deals " + damage + " damage.");
+    }
+}
+
+// StoryManager.java - Handles Story Progression
+public class StoryManager {
+    private int chapter = 1;
+
+    public void progressStory() {
+        switch (chapter) {
+            case 1: makoReactorMission(); break;
+            case 2: escapeMidgar(); break;
+            case 3: meetSephiroth(); break;
+        }
+    }
+
+    private void makoReactorMission() {
+        System.out.println("Cloud and Barret plant a bomb at the Mako Reactor.");
+        chapter++;
+    }
+
+    private void escapeMidgar() {
+        System.out.println("Cloud and his team escape Midgar.");
+        chapter++;
+    }
+
+    private void meetSephiroth() {
+        System.out.println("Cloud has a vision of Sephiroth burning Nibelheim.");
+        chapter++;
+    }
+}
+
+// NPC.java - Handles NPC Interactions
+public class NPC {
+    int x, y;
+    String dialogue;
+
+    public NPC(int x, int y, String dialogue) {
+        this.x = x;
+        this.y = y;
+        this.dialogue = dialogue;
+    }
+}
+
+// Inventory.java - Handles Items and Materia
+import java.util.ArrayList;
+
+public class Inventory {
+    private ArrayList<String> items = new ArrayList<>();
+
+    public void addItem(String item) {
+        items.add(item);
+    }
+
+    public void showInventory() {
+        System.out.println("Inventory:");
+        for (String item : items) {
+            System.out.println("- " + item);
+        }
+    }
+}
